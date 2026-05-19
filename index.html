@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kuis Peralatan Pengecoran Logam - SMK</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Hover hanya tombol */
+    button:hover {
+      transform: scale(1.03);
+      transition: 0.2s;
+    }
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* Animasi Splash */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0px); }
+    }
+    .fadeInUp {
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2563eb;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="bg-blue-50 text-blue-900 font-sans">
+
+<!-- AUDIO -->
+<audio id="clickSound">
+  <source src="https://www.soundjay.com/buttons/sounds/button-09.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+</audio>
+
+<!-- HOME BUTTON -->
+<div id="homeBtn" class="hidden fixed top-4 left-4 z-50">
+  <button onclick="goHome()" class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow-md font-bold">
+    HOME
+  </button>
+</div>
+
+<!-- SPLASH SCREEN -->
+<section id="splashScreen" class="h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-700 to-blue-300 text-white">
+  <div class="text-center fadeInUp px-6">
+    <h1 class="text-4xl md:text-6xl font-extrabold drop-shadow-lg mb-4">
+      UJIAN PERALATAN PENGECORAN LOGAM
+    </h1>
+    <p class="text-lg md:text-xl font-semibold mb-4">
+      Media Ujian Interaktif SMK
+    </p>
+    <p class="text-sm italic mb-8">
+      Pengembang: <b>Kelompok 2</b>
+    </p>
+
+    <button onclick="startApp()" class="bg-white text-blue-700 font-bold px-8 py-4 rounded-2xl shadow-lg text-xl">
+      MULAI
+    </button>
+  </div>
+</section>
+
+<!-- MAIN MENU -->
+<section id="mainMenu" class="hidden min-h-screen flex flex-col justify-center items-center px-6 py-10">
+  <h2 class="text-3xl font-extrabold mb-4 text-blue-700">MENU UTAMA</h2>
+
+  <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-xl">
+    <label class="block font-bold mb-2">Masukkan Nama Siswa:</label>
+    <input id="studentName" type="text"
+      class="w-full p-3 border-2 border-blue-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+      placeholder="Contoh: Rifda Saleem"
+      oninput="updateName()"
+    />
+    <p class="mt-2 text-sm text-blue-700">Nama akan digunakan pada sertifikat reward.</p>
+
+    <!-- SETTINGS -->
+    <div class="mt-6 border-t pt-4">
+      <h3 class="font-bold text-blue-700 mb-2">Pengaturan Audio</h3>
+
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-semibold">Musik:</span>
+        <button onclick="toggleMusic()" id="musicToggleBtn"
+          class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          ON
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="font-semibold">Volume:</span>
+        <input type="range" min="0" max="1" step="0.01" value="0.5"
+          class="w-full"
+          onchange="setVolume(this.value)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU UTAMA: 1 pilihan -->
+  <div class="mt-8 w-full max-w-xl">
+    <button onclick="openPage('kuisMenu')"
+      class="w-full bg-blue-600 text-white py-4 rounded-2xl shadow-lg font-bold text-xl">
+      KUIS
+    </button>
+  </div>
+
+  <p class="mt-8 text-sm italic text-blue-700">
+    Materi dan simulasi tersedia di dalam menu KUIS.
+  </p>
+</section>
+
+<!-- KUIS MENU (MATERI + SIMULASI + GAME KUIS) -->
+<section id="kuisMenu" class="hidden min-h-screen px-6 py-16">
+  <h2 class="text-4xl font-extrabold text-blue-700 mb-4">KUIS PERALATAN PENGECORAN</h2>
+  <p class="mb-6 font-semibold text-blue-800">
+    Pilih menu latihan: Materi, Simulasi, atau Game Kuis.
+  </p>
+
+  <div class="grid md:grid-cols-3 gap-4 mb-8">
+    <button onclick="openPage('materi')" class="bg-blue-600 text-white py-4 rounded-2xl shadow-lg font-bold">
+      MATERI
+    </button>
+    <button onclick="openPage('simulasi')" class="bg-blue-600 text-white py-4 rounded-2xl shadow-lg font-bold">
+      SIMULASI
+    </button>
+    <button onclick="openPage('kuisGame')" class="bg-blue-600 text-white py-4 rounded-2xl shadow-lg font-bold">
+      GAME KUIS
+    </button>
+  </div>
+
+  <div class="bg-white shadow-lg rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-blue-700 mb-2">Petunjuk</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><b>Materi</b>: Pelajari alat-alat pengecoran logam.</li>
+      <li><b>Simulasi</b>: 10 soal campuran untuk latihan UKK.</li>
+      <li><b>Game Kuis</b>: 4 game berbeda dengan level progresif.</li>
+      <li>Jika nilai memenuhi syarat, Anda akan mendapatkan <b>Sertifikat Reward</b>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- MATERI -->
+<section id="materi" class="hidden min-h-screen px-6 py-16">
+  <h2 class="text-4xl font-extrabold text-blue-700 mb-4">MATERI PERALATAN PENGECORAN</h2>
+  <p class="mb-6 font-semibold">Klik tab untuk membuka materi (Interaktif).</p>
+
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button onclick="showMateri(1)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Materi 1</button>
+    <button onclick="showMateri(2)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Materi 2</button>
+    <button onclick="showMateri(3)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Materi 3</button>
+    <button onclick="showMateri(4)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Materi 4</button>
+  </div>
+
+  <div id="materiBox" class="bg-white shadow-lg rounded-2xl p-6">
+    <h3 class="text-2xl font-bold text-blue-700 mb-3">Materi 1: Tungku Peleburan</h3>
+    <p>
+      Tungku peleburan adalah alat utama untuk mencairkan logam sebelum dituangkan ke cetakan.
+    </p>
+
+    <button onclick="toggleReveal('materiReveal1')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+      Klik untuk detail
+    </button>
+
+    <div id="materiReveal1" class="hidden mt-4 bg-blue-50 p-4 rounded-xl">
+      <ul class="list-disc pl-6 space-y-1">
+        <li><b>Tungku Induksi</b>: menggunakan listrik dan medan elektromagnetik.</li>
+        <li><b>Tungku Kupola</b>: biasa digunakan untuk peleburan besi cor.</li>
+        <li><b>Tungku Krusibel</b>: menggunakan wadah krusibel (crucible pot).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULASI -->
+<section id="simulasi" class="hidden min-h-screen px-6 py-16">
+  <h2 class="text-4xl font-extrabold text-blue-700 mb-4">SIMULASI (10 SOAL)</h2>
+  <p class="font-semibold mb-4">Latihan uji pemahaman: Drag the Word, Pilihan Ganda, dan Mark the Word.</p>
+
+  <div id="simulasiBox" class="bg-white shadow-lg rounded-2xl p-6">
+    <div id="soalSimulasi"></div>
+
+    <div class="mt-6 flex justify-between">
+      <button onclick="prevSimulasi()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Sebelumnya</button>
+      <button onclick="nextSimulasi()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Berikutnya</button>
+    </div>
+  </div>
+</section>
+
+<!-- GAME KUIS -->
+<section id="kuisGame" class="hidden min-h-screen px-6 py-16">
+  <h2 class="text-4xl font-extrabold text-blue-700 mb-6">GAME KUIS</h2>
+  <p class="mb-6 font-semibold">Pilih game kuis. Setiap game memiliki 3 level progresif.</p>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+      <h3 class="text-xl font-bold text-blue-700">Game 1: Tebak Nama Alat</h3>
+      <p class="mb-3">Level 1-3</p>
+      <button onclick="startQuizGame(1)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Mulai</button>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+      <h3 class="text-xl font-bold text-blue-700">Game 2: Pilihan Ganda Cepat</h3>
+      <p class="mb-3">Level 1-3</p>
+      <button onclick="startQuizGame(2)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Mulai</button>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+      <h3 class="text-xl font-bold text-blue-700">Game 3: Benar / Salah</h3>
+      <p class="mb-3">Level 1-3</p>
+      <button onclick="startQuizGame(3)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Mulai</button>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+      <h3 class="text-xl font-bold text-blue-700">Game 4: Cocokkan Fungsi</h3>
+      <p class="mb-3">Level 1-3</p>
+      <button onclick="startQuizGame(4)" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Mulai</button>
+    </div>
+  </div>
+
+  <div id="quizBox" class="hidden mt-8 bg-white shadow-lg rounded-2xl p-6">
+    <h3 id="quizTitle" class="text-2xl font-bold text-blue-700 mb-4"></h3>
+    <div id="quizQuestion"></div>
+
+    <div class="mt-6 flex justify-between">
+      <button onclick="prevQuiz()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Sebelumnya</button>
+      <button onclick="nextQuiz()" class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">Berikutnya</button>
+    </div>
+  </div>
+</section>
+
+<!-- SERTIFIKAT -->
+<section id="sertifikat" class="hidden min-h-screen flex justify-center items-center px-6 py-16 bg-gradient-to-br from-blue-200 to-blue-50">
+  <div class="bg-white shadow-2xl rounded-2xl p-10 max-w-2xl w-full text-center border-4 border-blue-500">
+    <h2 class="text-4xl font-extrabold text-blue-700 mb-4">SERTIFIKAT PENCAPAIAN</h2>
+    <p class="text-lg mb-2">Diberikan kepada:</p>
+    <h3 id="certName" class="text-3xl font-extrabold text-blue-800 mb-6">Nama Siswa</h3>
+
+    <p class="mb-4">
+      Telah menyelesaikan latihan ujian <b>Peralatan Pengecoran Logam</b>
+      melalui Simulasi dan Game Kuis Interaktif.
+    </p>
+
+    <p class="font-bold text-blue-700 mb-2">SMK - Teknik Pengecoran Logam</p>
+    <p class="text-sm italic mb-6">Pengembang: <b>Kelompok 2</b></p>
+
+    <button onclick="goHome()" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">
+      Kembali ke Menu Utama
+    </button>
+  </div>
+</section>
+
+<script>
+  // =======================
+  // GLOBAL VARIABLES
+  // =======================
+  let studentName = "";
+  let musicOn = true;
+
+  let simulasiIndex = 0;
+  let simulasiScore = 0;
+
+  let quizGame = 0;
+  let quizIndex = 0;
+  let quizScore = 0;
+
+  const clickSound = document.getElementById("clickSound");
+  const bgMusic = document.getElementById("bgMusic");
+  bgMusic.volume = 0.5;
+
+  function playClick() {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+
+  // =======================
+  // NAVIGATION SYSTEM
+  // =======================
+  function startApp() {
+    playClick();
+    document.getElementById("splashScreen").classList.add("hidden");
+    document.getElementById("mainMenu").classList.remove("hidden");
+    document.getElementById("homeBtn").classList.remove("hidden");
+
+    if (musicOn) bgMusic.play();
+  }
+
+  function hideAllPages() {
+    const pages = ["mainMenu","kuisMenu","materi","simulasi","kuisGame","sertifikat"];
+    pages.forEach(p => document.getElementById(p).classList.add("hidden"));
+  }
+
+  function openPage(pageId) {
+    playClick();
+    hideAllPages();
+    document.getElementById(pageId).classList.remove("hidden");
+
+    if (pageId === "simulasi") {
+      simulasiIndex = 0;
+      simulasiScore = 0;
+      renderSimulasi();
+    }
+  }
+
+  function goHome() {
+    playClick();
+    hideAllPages();
+    document.getElementById("mainMenu").classList.remove("hidden");
+  }
+
+  // =======================
+  // NAME INPUT
+  // =======================
+  function updateName() {
+    studentName = document.getElementById("studentName").value;
+  }
+
+  // =======================
+  // AUDIO SETTINGS
+  // =======================
+  function toggleMusic() {
+    playClick();
+    musicOn = !musicOn;
+    document.getElementById("musicToggleBtn").innerText = musicOn ? "ON" : "OFF";
+    if (musicOn) bgMusic.play();
+    else bgMusic.pause();
+  }
+
+  function setVolume(val) {
+    bgMusic.volume = val;
+  }
+
+  // =======================
+  // MATERI SYSTEM (TAB + REVEAL)
+  // =======================
+  function toggleReveal(id) {
+    playClick();
+    document.getElementById(id).classList.toggle("hidden");
+  }
+
+  function showMateri(num) {
+    playClick();
+    const materiBox = document.getElementById("materiBox");
+    let materiContent = "";
+
+    if (num === 1) {
+      materiContent = `
+        <h3 class="text-2xl font-bold text-blue-700 mb-3">Materi 1: Tungku Peleburan</h3>
+        <p>Tungku adalah alat utama untuk mencairkan logam sebelum pengecoran.</p>
+        <button onclick="toggleReveal('materiReveal1')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          Klik untuk detail
+        </button>
+        <div id="materiReveal1" class="hidden mt-4 bg-blue-50 p-4 rounded-xl">
+          <ul class="list-disc pl-6 space-y-1">
+            <li><b>Induksi</b>: listrik + elektromagnetik.</li>
+            <li><b>Kupola</b>: peleburan besi cor.</li>
+            <li><b>Krusibel</b>: memakai wadah crucible.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    if (num === 2) {
+      materiContent = `
+        <h3 class="text-2xl font-bold text-blue-700 mb-3">Materi 2: Peralatan Penuangan</h3>
+        <p>Peralatan penuangan digunakan untuk membawa logam cair dari tungku ke cetakan.</p>
+        <button onclick="toggleReveal('materiReveal2')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          Klik untuk detail
+        </button>
+        <div id="materiReveal2" class="hidden mt-4 bg-blue-50 p-4 rounded-xl">
+          <ul class="list-disc pl-6 space-y-1">
+            <li><b>Ladle (Sendok Tuang)</b>: wadah untuk menuang logam cair.</li>
+            <li><b>Tang Jepit</b>: memegang ladle atau krusibel.</li>
+            <li><b>Skimmer</b>: mengambil slag/kotoran di permukaan logam cair.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    if (num === 3) {
+      materiContent = `
+        <h3 class="text-2xl font-bold text-blue-700 mb-3">Materi 3: Peralatan Cetakan</h3>
+        <p>Peralatan cetakan digunakan untuk membentuk rongga cetakan sebelum penuangan.</p>
+        <button onclick="toggleReveal('materiReveal3')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          Klik untuk detail
+        </button>
+        <div id="materiReveal3" class="hidden mt-4 bg-blue-50 p-4 rounded-xl">
+          <ul class="list-disc pl-6 space-y-1">
+            <li><b>Flask</b>: rangka cetakan (cope & drag).</li>
+            <li><b>Pola (Pattern)</b>: bentuk tiruan benda kerja.</li>
+            <li><b>Rammer</b>: pemadat pasir cetak.</li>
+            <li><b>Trowel</b>: merapikan permukaan pasir.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    if (num === 4) {
+      materiContent = `
+        <h3 class="text-2xl font-bold text-blue-700 mb-3">Materi 4: Peralatan Finishing & K3</h3>
+        <p>Setelah coran dibongkar, diperlukan alat finishing serta APD untuk keselamatan.</p>
+        <button onclick="toggleReveal('materiReveal4')" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          Klik untuk detail
+        </button>
+        <div id="materiReveal4" class="hidden mt-4 bg-blue-50 p-4 rounded-xl">
+          <ul class="list-disc pl-6 space-y-1">
+            <li><b>Gerinda</b>: meratakan hasil coran.</li>
+            <li><b>Palu & Pahat</b>: membersihkan pasir/cetakan.</li>
+            <li><b>APD</b>: helm, face shield, sarung tangan tahan panas, sepatu safety.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    materiBox.innerHTML = materiContent;
+  }
+
+  // =======================
+  // SIMULASI QUESTIONS (10)
+  // =======================
+  const simulasiQuestions = [
+    { type: "mcq", q: "1. Alat untuk menuangkan logam cair ke cetakan disebut ...", options: ["Ladle", "Rammer", "Flask"], answer: 0 },
+    { type: "mark", q: "2. Tandai/ketik alat yang digunakan untuk mengambil slag (kotoran) di permukaan logam cair:", answer: "skimmer" },
+    { type: "mcq", q: "3. Alat pemadat pasir cetak disebut ...", options: ["Rammer", "Trowel", "Thermometer"], answer: 0 },
+    { type: "drag", q: "4. Drag kata yang tepat: Rangka cetakan (cope & drag) disebut ...", answer: "flask" },
+    { type: "mcq", q: "5. Tungku yang menggunakan energi listrik adalah ...", options: ["Tungku Induksi", "Tungku Kupola", "Tungku Arang"], answer: 0 },
+    { type: "mark", q: "6. Ketik nama alat untuk merapikan permukaan pasir cetak:", answer: "trowel" },
+    { type: "mcq", q: "7. Alat untuk memotong atau membersihkan saluran coran adalah ...", options: ["Gerinda", "Sendok makan", "Penghapus"], answer: 0 },
+    { type: "drag", q: "8. Drag kata yang tepat: Tiruan benda kerja untuk membuat cetakan disebut ...", answer: "pola" },
+    { type: "mcq", q: "9. APD utama untuk melindungi wajah dari percikan logam cair adalah ...", options: ["Face Shield", "Masker kain", "Topi biasa"], answer: 0 },
+    { type: "mcq", q: "10. Alat ukur untuk mengetahui suhu logam cair disebut ...", options: ["Thermometer", "Rammer", "Skimmer"], answer: 0 }
+  ];
+
+  function renderSimulasi() {
+    const soal = simulasiQuestions[simulasiIndex];
+    let html = `<h3 class="text-xl font-bold text-blue-700 mb-4">${soal.q}</h3>`;
+
+    if (soal.type === "mcq") {
+      html += soal.options.map((opt, idx) => `
+        <button onclick="checkSimulasiAnswer(${idx})"
+          class="block w-full text-left bg-blue-100 hover:bg-blue-200 text-blue-900 px-4 py-3 rounded-xl mb-3 font-semibold">
+          ${opt}
+        </button>
+      `).join("");
+    }
+
+    if (soal.type === "mark") {
+      html += `
+        <p class="mb-3">Ketik jawaban yang benar:</p>
+        <input id="markInput" class="w-full p-3 border-2 border-blue-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Jawaban..."/>
+        <button onclick="checkMarkWord()"
+          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+          Cek Jawaban
+        </button>
+      `;
+    }
+
+    if (soal.type === "drag") {
+      html += `
+        <p class="mb-4">Drag kata berikut ke kotak jawaban:</p>
+        <div class="flex gap-3 mb-4 flex-wrap">
+          <div draggable="true" ondragstart="drag(event)" id="dragWord"
+            class="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold cursor-pointer">
+            ${soal.answer}
+          </div>
+        </div>
+
+        <div ondrop="drop(event)" ondragover="allowDrop(event)"
+          class="bg-blue-100 border-2 border-dashed border-blue-500 p-6 rounded-xl text-center font-bold">
+          DROP DI SINI
+        </div>
+      `;
+    }
+
+    document.getElementById("soalSimulasi").innerHTML = html;
+  }
+
+  function checkSimulasiAnswer(choice) {
+    playClick();
+    const soal = simulasiQuestions[simulasiIndex];
+    if (choice === soal.answer) simulasiScore++;
+    alert(choice === soal.answer ? "Benar!" : "Salah!");
+  }
+
+  function checkMarkWord() {
+    playClick();
+    const soal = simulasiQuestions[simulasiIndex];
+    const val = document.getElementById("markInput").value.trim().toLowerCase();
+    if (val === soal.answer) {
+      simulasiScore++;
+      alert("Benar!");
+    } else {
+      alert("Salah!");
+    }
+  }
+
+  function allowDrop(ev) { ev.preventDefault(); }
+  function drag(ev) { ev.dataTransfer.setData("text", ev.target.innerText); }
+
+  function drop(ev) {
+    ev.preventDefault();
+    playClick();
+    const data = ev.dataTransfer.getData("text");
+    const soal = simulasiQuestions[simulasiIndex];
+    if (data.toLowerCase() === soal.answer) {
+      simulasiScore++;
+      alert("Benar!");
+    } else {
+      alert("Salah!");
+    }
+  }
+
+  function nextSimulasi() {
+    playClick();
+    if (simulasiIndex < simulasiQuestions.length - 1) {
+      simulasiIndex++;
+      renderSimulasi();
+    } else {
+      finishSimulasi();
+    }
+  }
+
+  function prevSimulasi() {
+    playClick();
+    if (simulasiIndex > 0) {
+      simulasiIndex--;
+      renderSimulasi();
+    }
+  }
+
+  function finishSimulasi() {
+    alert("Simulasi selesai! Skor Anda: " + simulasiScore + "/10");
+
+    sendToCanvaSheet(simulasiScore, "SIMULASI");
+
+    if (simulasiScore >= 7) {
+      showCertificate("SIMULASI", simulasiScore);
+    } else {
+      alert("Nilai belum mencapai reward (Minimal 7). Silakan coba lagi.");
+      openPage("kuisMenu");
+    }
+  }
+
+  // =======================
+  // QUIZ GAMES (4 Games, 3 Levels)
+  // =======================
+  const quizData = {
+    1: [
+      { q: "Level 1: Alat untuk menuang logam cair disebut ...", options: ["Ladle", "Rammer", "Flask"], answer: 0 },
+      { q: "Level 2: Alat untuk mengambil slag disebut ...", options: ["Skimmer", "Trowel", "Gerinda"], answer: 0 },
+      { q: "Level 3: Alat pemadat pasir cetak disebut ...", options: ["Rammer", "Thermometer", "Face Shield"], answer: 0 }
+    ],
+    2: [
+      { q: "Level 1: Flask berfungsi sebagai ...", options: ["Rangka cetakan", "Alat ukur suhu", "Alat pemotong"], answer: 0 },
+      { q: "Level 2: Tungku induksi menggunakan energi ...", options: ["Air", "Listrik", "Angin"], answer: 1 },
+      { q: "Level 3: Alat finishing untuk meratakan coran adalah ...", options: ["Gerinda", "Sendok", "Palu kayu"], answer: 0 }
+    ],
+    3: [
+      { q: "Level 1: Skimmer digunakan untuk mengambil slag. (Benar/Salah)", options: ["Benar", "Salah"], answer: 0 },
+      { q: "Level 2: Rammer digunakan untuk menuang logam cair. (Benar/Salah)", options: ["Benar", "Salah"], answer: 1 },
+      { q: "Level 3: Face shield termasuk APD. (Benar/Salah)", options: ["Benar", "Salah"], answer: 0 }
+    ],
+    4: [
+      { q: "Level 1: Alat untuk merapikan pasir cetak adalah ...", options: ["Trowel", "Ladle", "Thermometer"], answer: 0 },
+      { q: "Level 2: Alat ukur suhu logam cair disebut ...", options: ["Thermometer", "Flask", "Rammer"], answer: 0 },
+      { q: "Level 3: Pola (pattern) adalah ...", options: ["Tiruan benda kerja", "Alat pemotong", "Alat penuang"], answer: 0 }
+    ]
+  };
+
+  function startQuizGame(game) {
+    playClick();
+    quizGame = game;
+    quizIndex = 0;
+    quizScore = 0;
+
+    document.getElementById("quizBox").classList.remove("hidden");
+    document.getElementById("quizTitle").innerText = "Game " + game + " (Level Progresif)";
+    renderQuiz();
+  }
+
+  function renderQuiz() {
+    const soal = quizData[quizGame][quizIndex];
+
+    let html = `<h3 class="text-xl font-bold mb-4">${soal.q}</h3>`;
+    html += soal.options.map((opt, idx) => `
+      <button onclick="checkQuizAnswer(${idx})"
+        class="block w-full text-left bg-blue-100 hover:bg-blue-200 text-blue-900 px-4 py-3 rounded-xl mb-3 font-semibold">
+        ${opt}
+      </button>
+    `).join("");
+
+    document.getElementById("quizQuestion").innerHTML = html;
+  }
+
+  function checkQuizAnswer(choice) {
+    playClick();
+    const soal = quizData[quizGame][quizIndex];
+    if (choice === soal.answer) quizScore++;
+    alert(choice === soal.answer ? "Benar!" : "Salah!");
+  }
+
+  function nextQuiz() {
+    playClick();
+    if (quizIndex < quizData[quizGame].length - 1) {
+      quizIndex++;
+      renderQuiz();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function prevQuiz() {
+    playClick();
+    if (quizIndex > 0) {
+      quizIndex--;
+      renderQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    alert("Game Kuis selesai! Skor Anda: " + quizScore + "/3");
+    sendToCanvaSheet(quizScore, "GAME_KUIS_" + quizGame);
+
+    if (quizScore >= 2) {
+      showCertificate("GAME KUIS", quizScore);
+    } else {
+      alert("Nilai belum mencapai reward (Minimal 2). Silakan coba ulang.");
+      openPage("kuisMenu");
+    }
+  }
+
+  // =======================
+  // CERTIFICATE SYSTEM
+  // =======================
+  function showCertificate(mode, score) {
+    playClick();
+    hideAllPages();
+    document.getElementById("sertifikat").classList.remove("hidden");
+
+    document.getElementById("certName").innerText =
+      studentName && studentName.trim() !== "" ? studentName : "Siswa SMK";
+
+    console.log("Sertifikat diberikan untuk:", mode, "Skor:", score);
+  }
+
+  // =======================
+  // CANVA SHEET CONNECTION
+  // =======================
+  // CATATAN PENTING:
+  // Canva Sheet tidak bisa langsung menerima data tanpa endpoint API.
+  // Solusi: gunakan Google Apps Script / Webhook sebagai jembatan.
+  function sendToCanvaSheet(score, jenisTes) {
+    const nama = studentName && studentName.trim() !== "" ? studentName : "Tanpa Nama";
+
+    // GANTI URL INI dengan endpoint Apps Script / webhook Canva Sheet
+    const SHEET_URL = "PASTE_URL_ENDPOINT_CANVA_SHEET_DI_SINI";
+
+    if (SHEET_URL.includes("PASTE_URL")) {
+      console.log("Endpoint Canva Sheet belum diisi. Data tidak dikirim.");
+      return;
+    }
+
+    fetch(SHEET_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nama: nama,
+        jenis: jenisTes,
+        nilai: score,
+        waktu: new Date().toLocaleString()
+      })
+    })
+    .then(res => res.text())
+    .then(data => console.log("Terkirim:", data))
+    .catch(err => console.log("Gagal kirim:", err));
+  }
+</script>
+
+</body>
+</html>
